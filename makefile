@@ -27,4 +27,13 @@ run: time time_shared time_pipe
 	@echo "running pipe..."
 	./time_pipe ls
 
-.PHONY: all clean run
+run_normal: time
+	./time ls
+
+run_shared: time_shared
+	./time_shared ls
+
+run_pipe: time_pipe
+	./time_pipe ls
+
+.PHONY: all clean run run_normal run_shared run_pipe
