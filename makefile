@@ -1,28 +1,39 @@
 CC = gcc
 CFLAGS = -Wall
+OBJS = common.o 
 
 all: time time_shared time_pipe
 
-time: time.c 
-	$(CC) $(CFLAGS) -o time time.c 
+common.o: common.c time.h
+	$(CC) $(CFLAGS) -c common.c
 
-time_shared: time_shared.c 
-	$(CC) $(CFLAGS) -o time_shared time_shared.c
+time: time.c $(OBJS)
+	$(CC) $(CFLAGS) -o time time.c $(OBJS)
 
-time_pipe: time_pipe.c 
-	$(CC) $(CFLAGS) -o time_pipe time_pipe.c
+time_shared: time_shared.c $(OBJS)
+	$(CC) $(CFLAGS) -o time_shared time_shared.c $(OBJS)
+
+time_pipe: time_pipe.c $(OBJS)
+	$(CC) $(CFLAGS) -o time_pipe time_pipe.c $(OBJS)
 
 clean:
-	rm -f time time_shared time_pipe
-
-depend: time.c time_shared.c time_pipe.c 
-	$(CC) -MM time.c time_shared.c time_pipe.c > .depend
-
--include .depend
+	rm -f *.o time time_shared time_pipe
 
 run: time time_shared time_pipe
+	@echo "running simple..."
 	./time ls
+	@echo "running shared..."
 	./time_shared ls
+	@echo "running pipe..."
 	./time_pipe ls
 
-.PHONY: all clean depend run
+run_normal: time
+	./time ls
+
+run_shared: time_shared
+	./time_shared ls
+
+run_pipe: time_pipe
+	./time_pipe ls
+
+.PHONY: all clean run run_normal run_shared run_pipe
